@@ -1,0 +1,16 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-c",
+      "-std=c++20",
+      "-g",
+      "-o",
+      "main",
+      "main.cpp"
+    ],
+    "directory": "/home/may/emulator",
+    "file": "/home/may/emulator/main.cpp",
+    "output": "/home/may/emulator/main"
+  }
+]
