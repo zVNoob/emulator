@@ -1,0 +1,1 @@
+/usr/bin/c++ -g -rdynamic CMakeFiles/main.dir/main.cpp.o -o main  FTXUI/libftxui-screen.a FTXUI/libftxui-dom.a FTXUI/libftxui-component.a FTXUI/libftxui-dom.a FTXUI/libftxui-screen.a 

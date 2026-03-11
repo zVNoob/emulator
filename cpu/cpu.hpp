@@ -46,8 +46,10 @@ class CPU {
 public:
   std::map<std::string,std::unique_ptr<CPU_Feature>> features;
   CPU_State state;
+  bool running = true;
   void step() {
     state.regs[0] = 0;
+    if (!running) return;
     uint32_t opcode = state.mem->read(state.pc, 4);
     try {
       for (auto& feature : features) {

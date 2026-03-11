@@ -79,14 +79,18 @@ namespace reader {
     if (line.find(".ascii ") != std::string::npos) {
       std::string s = line.substr(7);
       while (s[0] == ' ' || s[0] == '\t') s = s.substr(1);
-      s = s.substr(1, s.size()-2);
+      s = s.substr(1, std::string::npos);
+      while (s[s.size()-1] == ' ' || s[s.size()-1] == '\t') s = s.substr(0, s.size()-1);
+      s = s.substr(0, s.size()-1);
       for (char c : s) data_memory.push_back(c);
       return s.size();
     }
     if (line.find(".asciz ") != std::string::npos || line.find(".string ") != std::string::npos) {
       std::string s = line.substr(7);
       while (s[0] == ' ' || s[0] == '\t') s = s.substr(1);
-      s = s.substr(1, s.size()-2);
+      s = s.substr(1, std::string::npos);
+      while (s[s.size()-1] == ' ' || s[s.size()-1] == '\t') s = s.substr(0, s.size()-1);
+      s = s.substr(0, s.size()-1);
       for (char c : s) data_memory.push_back(c);
       data_memory.push_back(0);
       return s.size() + 1;
@@ -133,7 +137,13 @@ namespace reader {
     labels["."] = data_start;
     for (auto& s : data_asm) {
       process_labels(s);
-      if (s[0] == '.') labels["."] += process_directives(s);
+      if (s[0] == '.') {
+        labels["."] += process_directives(s);
+        while (labels["."] % 4) {
+          data_memory.push_back(0);
+          labels["."]++;
+        }
+      }
     }
   }
   void process_text() {
@@ -185,8 +195,14 @@ public:
       .size = text_memory.size(),
       .data = text_memory,
     };
+    Read_Data data_seg = {
+      .start = data_start,
+      .size = data_memory.size(),
+      .data = data_memory,
+    };
     return {
       text_seg,
+      data_seg
     };
   }
   };

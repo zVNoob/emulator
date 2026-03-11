@@ -15,13 +15,13 @@ namespace _assembler {
     std::map<std::string, uint64_t>& labels;
     const std::string op_list = "+-*/!^&|><";
     int get_priority(std::string op) {
-      if (op == "^") return 0;if (op == "&") return 0;if (op == "|") return 0;
-      if (op == ">>") return 1;if (op == "<<") return 1;
-      if (op == "<") return 2;if (op == ">") return 2;
-      if (op == "<=") return 2;if (op == ">=") return 2;
-      if (op == "==") return 2;if (op == "!=") return 2;
-      if (op == "+") return 3;if (op == "-") return 3;
-      if (op == "*") return 4;if (op == "/") return 4;if (op == "%") return 4;
+      if (op == "^")  return 0;if (op == "&")   return 0;if (op == "|") return 0;
+      if (op == ">>") return 1;if (op == "<<")  return 1;
+      if (op == "<")  return 2;if (op == ">")   return 2;
+      if (op == "<=") return 2;if (op == ">=")  return 2;
+      if (op == "==") return 2;if (op == "!=")  return 2;
+      if (op == "+")  return 3;if (op == "-")   return 3;
+      if (op == "*")  return 4;if (op == "/")   return 4;if (op == "%") return 4;
       return 5;
     }
   int64_t to_int_with_base(const std::string& s, int base) {
@@ -50,6 +50,7 @@ namespace _assembler {
     while (line[0] != ' ' && line[0] != '\t') {
       if (line[0] == '\0') return ret;
       if (is_op != get_is_op(line.substr(0, 1))) return ret;
+      if (is_op) if (op_list.find(line[0]) == std::string::npos) return ret;
       ret += line[0];
       line = line.substr(1);
     }

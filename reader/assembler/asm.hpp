@@ -10,6 +10,7 @@
 #include "asm_I.hpp"
 #include "asm_U.hpp"
 #include "asm_S.hpp"
+#include "asm_system.hpp"
 #include "calculator.hpp"
 
 namespace _assembler {
@@ -95,6 +96,9 @@ namespace _assembler {
       if (line.find("sw ") != std::string::npos) return process_asm_S(line, calc);
       
       if (line.find("jal ")!= std::string::npos) return process_asm_J(line, calc);
+
+      if (line.find("ecall ") != std::string::npos) return process_asm_system(line);
+      if (line.find("ebreak ") != std::string::npos) return process_asm_system(line);
     }
     catch (const char* s) {
       throw InvalidInstruction(line, s);

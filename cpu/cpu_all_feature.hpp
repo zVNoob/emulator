@@ -3,12 +3,14 @@
 #include "cpu.hpp"
 #include <memory>
 
-#include "cpu_I.hpp"
+#include "cpu_32I.hpp"
+#include "cpu_envcall.hpp"
 
 namespace cpu {
 CPU all_feature() {
   CPU cpu;
-  cpu.features["32I"] = std::make_unique<CPU_I>(); 
+  cpu.features["32I"] = std::make_unique<CPU_32I>();
+  cpu.features["env"] = std::make_unique<CPU_EnvCall>();
   return cpu;
 }
 }

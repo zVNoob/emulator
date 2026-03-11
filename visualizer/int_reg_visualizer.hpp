@@ -19,11 +19,12 @@
 namespace visualizer {
 using namespace ftxui;
 
-static ButtonOption RegStyle() {
+static ButtonOption IntRegStyle() {
   ButtonOption option;
   option.transform = [](const EntryState& s) {
-    std::string name = s.label;
-    return text(name);
+    auto res = text(s.label);
+    if (s.focused) res |= bgcolor(Color::RGB(50, 50, 50));
+    return res;
   };
   return option;
 }
@@ -45,11 +46,12 @@ public:
       uint64_t* v = value;
       uint64_t* ov = old_value;
       auto h = is_hex;
-      auto b = Button(n, [h]() { *h = !*h;}, RegStyle());
+      auto b = Button(n, [h]() { *h = !*h;}, IntRegStyle());
       return Renderer(b,[b,n,v,ov,h]() {
         std::stringstream ss;
-        if (*h) ss << std::hex << std::setfill('0');
-        ss << std::setw(16) << *v;
+        if (*h) ss << "0x" << std::hex << std::setfill('0') << std::setw(16);
+        else ss << std::dec << std::setfill(' ') << std::setw(18);
+        ss << *(int64_t*)v;
         auto res = hbox({
           b->Render() | color(Color::RGB(255, 255, 255)),
           text(": "),
@@ -113,18 +115,20 @@ class IntRegisterVisualizer {
     std::transform(arr.begin(), arr.end(), std::back_inserter(res_arr1), [](SingleIntRegisterVisualizer& x) { return x(); });
     temp = Container::Vertical(res_arr1);
   }
-  void update_old_val() {
+  void pre_step() {
     for (int i = 0; i < 33; i++) {
+      if (old_val[i] != cpu->state.regs[i]) if (i != 32) {
+        temp->SetActiveChild(temp->ChildAt(i));
+      }
       old_val[i] = cpu->state.regs[i];
     }
   }
   auto operator()() {
     auto t = temp;
-    auto* ov = &old_val;
-    auto* c = cpu;
-    return Renderer(temp, [ov,c,t]() { 
-      auto res = window(text("Registers") | color(Color::RGB(200, 255, 100))
-                        ,t->Render() | vscroll_indicator | frame) | size(WIDTH, LESS_THAN, 24) | size(HEIGHT, LESS_THAN, 33);
+    return Renderer(temp, [t]() {
+      auto res = t->Render();
+      res = window(text("Registers") | color(Color::RGB(200, 255, 100))
+                  ,res | vscroll_indicator | frame | flex) | size(WIDTH, EQUAL, 30) | size(HEIGHT, LESS_THAN, 33);
       return res;
     });
   }
